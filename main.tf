@@ -143,8 +143,8 @@ resource "aws_mq_broker" "default" {
       if type.general_log_enabled || type.audit_log_enabled
     }
     content {
-      general = type.general_log_enabled ? type.general_log_enabled : false
-      audit = type.audit_log_enabled ? type.audit_log_enabled : false
+      general = logs.value["general_log_enabled"] ? logs.value["general_log_enabled"] : false
+      audit = logs.value["audit_log_enabled"] ? logs.value["audit_log_enabled"] : false
     }
   }
 
