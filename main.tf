@@ -127,14 +127,24 @@ resource "aws_mq_broker" "default" {
 
   # NOTE: Omit logs block if both general and audit logs disabled:
   # https://github.com/hashicorp/terraform-provider-aws/issues/18067
+  # dynamic "logs" {
+  #   for_each = {
+  #     for logs, type in local.mq_logs : logs => type
+  #     if type.general_log_enabled || type.audit_log_enabled
+  #   }
+  #   content {
+  #     general = logs.value["general_log_enabled"]
+  #     audit   = logs.value["audit_log_enabled"]
+  #   }
+  # }
   dynamic "logs" {
     for_each = {
       for logs, type in local.mq_logs : logs => type
       if type.general_log_enabled || type.audit_log_enabled
     }
     content {
-      general = logs.value["general_log_enabled"]
-      audit   = logs.value["audit_log_enabled"]
+      general = type.general_log_enabled ? type.general_log_enabled : false
+      audit = type.audit_log_enabled ? type.audit_log_enabled : false
     }
   }
 
